@@ -38,10 +38,8 @@ Retrieves all opened user sessions or a specified session.
 
 **Request body:** 
 - filter: object - filter parameters
-  - search: string - (optional) search substring to find in source, type or message
-  - type: string - (optional) type events
-  - source: string - (optional) server where events occured
-  - severity: number - (optional) severity of events
+  - user_id: string - (optional) unique user id
+  - active: boolean - (optional) active connections
   - from_time: Date - (optional) start of the time range
   - to_time: Date - (optional) end of the time range
 - paging: object - paging parameters
@@ -72,8 +70,8 @@ Opens a new user session and stores user information in it.
 - user_name: string - full user name
 - address: string - client address
 - client: string - client application name
-- data: Object - session data
 - user: Object - user data
+- data: Object - session data
 
 **Response body:**
 Created SessionV1 or error
