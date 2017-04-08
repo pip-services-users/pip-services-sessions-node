@@ -1,67 +1,98 @@
-import { Category } from 'pip-services-runtime-node';
-import { ComponentDescriptor } from 'pip-services-runtime-node';
-import { ComponentSet } from 'pip-services-runtime-node';
-import { AbstractController } from 'pip-services-runtime-node';
+import { ConfigParams } from 'pip-services-commons-node';
+import { IConfigurable } from 'pip-services-commons-node';
+import { IReferences } from 'pip-services-commons-node';
+import { Descriptor } from 'pip-services-commons-node';
+import { IReferenceable } from 'pip-services-commons-node';
+import { DependencyResolver } from 'pip-services-commons-node';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
+import { DataPage } from 'pip-services-commons-node';
+import { ICommandable } from 'pip-services-commons-node';
+import { CommandSet } from 'pip-services-commons-node';
+import { IdGenerator } from 'pip-services-commons-node';
+import { AnyValueMap } from 'pip-services-commons-node';
 
+import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from '../persistence/ISessionsPersistence';
 import { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
 import { SessionsCommandSet } from './SessionsCommandSet';
 
-export class SessionsController extends AbstractController implements ISessionsBusinessLogic {
-	/**
-	 * Unique descriptor for the SessionsController component
-	 */
-	public static Descriptor: ComponentDescriptor = new ComponentDescriptor(
-		Category.Controllers, "pip-services-sessions", "*", "*"
-	);
-    
-	private _db: ISessionsPersistence;
-    
-    constructor() {
-        super(SessionsController.Descriptor);
-    }
-    
-    public link(components: ComponentSet): void {
-        // Locate reference to quotes persistence component
-        this._db = <ISessionsPersistence>components.getOneRequired(
-        	new ComponentDescriptor(Category.Persistence, "pip-services-sessions", '*', '*')
-    	);
-        
-        super.link(components);
+export class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsBusinessLogic {
+    private static _defaultConfig: ConfigParams = ConfigParams.fromTuples(
+        'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0'
+    );
 
-        // Add commands
-        let commands = new SessionsCommandSet(this);
-        this.addCommandSet(commands);
-    }
-    
-    public getSessions(correlationId: string, userId: string, callback) {
-        callback = this.instrument(correlationId, 'sessions.get_sessions', callback);
-        this._db.getSessions(correlationId, userId, callback);
+    private _dependencyResolver: DependencyResolver = new DependencyResolver(SessionsController._defaultConfig);
+    private _persistence: ISessionsPersistence;
+    private _commandSet: SessionsCommandSet;
+
+    public configure(config: ConfigParams): void {
+        this._dependencyResolver.configure(config);
     }
 
-    public loadSession(correlationId: string, userId: string, sessionId: string, callback) {
-        callback = this.instrument(correlationId, 'sessions.load_session', callback);
-        this._db.loadSession(correlationId, userId, sessionId, callback);
+    public setReferences(references: IReferences): void {
+        this._dependencyResolver.setReferences(references);
+        this._persistence = this._dependencyResolver.getOneRequired<ISessionsPersistence>('persistence');
     }
 
-    public openSession(correlationId: string, user: any, address: string, client: string, data: any, callback) {
-        callback = this.instrument(correlationId, 'sessions.open_session', callback);
-        this._db.openSession(correlationId, user, address, client, data, callback);
+    public getCommandSet(): CommandSet {
+        if (this._commandSet == null)
+            this._commandSet = new SessionsCommandSet(this);
+        return this._commandSet;
     }
 
-    public storeSessionData(correlationId: string, userId: string, sessionId: string, data: any, callback) {
-        callback = this.instrument(correlationId, 'sessions.store_session_data', callback);
-        this._db.storeSessionData(correlationId, userId, sessionId, data, callback);
-    }
-
-    public closeSession(correlationId: string, userId: string, address: string, client: string, callback) {
-        callback = this.instrument(correlationId, 'sessions.close_session', callback);
-        this._db.closeSession(correlationId, userId, address, client, callback);
-    }
-
-    public deleteSession(correlationId: string, userId: string, sessionId: string, callback) {
-        callback = this.instrument(correlationId, 'sessions.delete_session', callback);
-        this._db.deleteSession(correlationId, userId, sessionId, callback);
+    public getSessions(correlationId: string, filter: FilterParams, paging: PagingParams,
+        callback: (err: any, page: DataPage<SessionV1>) => void): void {
+        this._persistence.getPageByFilter(correlationId, filter, paging, callback);
     }
     
+    public getSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void {
+        this._persistence.getOneById(correlationId, sessionId, callback);
+    }
+
+    public openSession(correlationId: string, user_id: string, user_name: string,
+        address: string, client: string, user: any, data: any,
+        callback: (err: any, session: SessionV1) => void): void {
+        let session = new SessionV1(
+            IdGenerator.nextLong(),
+            user_id, user_name, address, client
+        );
+        session.user = user;
+        session.data = data;
+
+        this._persistence.create(
+            correlationId, session, callback
+        );
+    }
+    
+    public storeSessionData(correlationId: string, sessionId: string, data: any,
+        callback: (err: any, session: SessionV1) => void): void {
+        this._persistence.updatePartially(
+            correlationId, sessionId, 
+            AnyValueMap.fromTuples(
+                'request_time', new Date(),
+                'data', data
+            ),
+            callback
+        );
+    }
+    
+    public closeSession(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void {
+        this._persistence.updatePartially(
+            correlationId, sessionId, 
+            AnyValueMap.fromTuples(
+                'active', false,
+                'request_time', new Date(),
+                'close_time', new Date()
+            ),
+            callback
+        );
+    }
+
+    public deleteSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void {
+        this._persistence.deleteById(correlationId, sessionId, callback);
+    }
 }

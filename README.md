@@ -19,14 +19,14 @@ This microservice has no dependencies on other microservices.
 * Client SDKs
   - [Node.js SDK](https://github.com/pip-services/pip-clients-settings-node)
 * Communication Protocols
-  - [HTTP/REST Version 1](doc/RestProtocolV1.md)
+  - [HTTP Version 1](doc/HttpProtocolV1.md)
   - [Seneca Version 1](doc/SenecaProtocolV1.md)
 
 ## Download
 
 Right now the only way to get the microservice is to check it out directly from github repository
 ```bash
-git clone git@github.com:pip-services/pip-services-sessions.git
+git clone git@github.com:pip-services-users/pip-services-sessions-node.git
 ```
 
 Pip.Service team is working to implement packaging and make stable releases available for your 
@@ -34,68 +34,28 @@ as zip downloadable archieves.
 
 ## Run
 
-Add **config.json** file to the root of the microservice folder and set configuration parameters.
-As the starting point you can use example configuration from **config.example.json** file. 
+Add **config.yaml** file to the root of the microservice folder and set configuration parameters.
+As the starting point you can use example configuration from **config.example.yaml** file. 
 
 Example of microservice configuration
-```javascript
-{    
-    "logs": {
-        "descriptor": { 
-            "type": "console"
-        },
-        "options": { 
-            "level": 5
-        }
-    },    
-    "counters": {
-        "descriptor": { 
-            "type": "log"
-        },
-        "options": { 
-            "timeout": 10000
-        }
-    },
-    "persistence": {
-        "descriptor": {
-            "group": "pip-services-sessions",
-            "type": "file"
-        },
-        "options": {
-            "path": "data/sessions.json"
-        }
-    },    
-    "controllers": {
-        "descriptor": {
-            "group": "pip-services-sessions"
-        }
-    },    
-    "client": [],    
-    "service": [
-        {
-            "descriptor": {
-                "group": "pip-services-sessions",
-                "type": "seneca"
-            },
-            "endpoint": {
-                "protocol": "tcp",
-                "host": "localhost",
-                "port": 8807
-            }
-        },
-        {
-            "descriptor": {
-                "group": "pip-services-sessions",
-                "type": "rest"
-            },
-            "endpoint": {
-                "protocol": "http",
-                "host": "localhost",
-                "port": 8007
-            }
-        }
-    ]   
-}
+```yaml
+- descriptor: "pip-services-container:container-info:default:default:1.0"
+  name: "pip-services-sessions"
+  description: "Sessions microservice"
+
+- descriptor: "pip-services-commons:logger:console:default:1.0"
+  level: "trace"
+
+- descriptor: "pip-services-sessions:persistence:file:default:1.0"
+  path: "./data/sessions.json"
+
+- descriptor: "pip-services-sessions:controller:default:default:1.0"
+
+- descriptor: "pip-services-sessions:service:http:default:1.0"
+  connection:
+    protocol: "http"
+    host: "0.0.0.0"
+    port: 3000
 ```
  
 For more information on the microservice configuration see [Configuration Guide](Configuration.md).
@@ -124,14 +84,14 @@ If you use Node.js then you should add dependency to the client SDK into **packa
 
 Inside your code get the reference to the client SDK
 ```javascript
-var sdk = new require('pip-clients-sessions-node').Version1;
+var sdk = new require('pip-clients-sessions-node');
 ```
 
 Define client configuration parameters that match configuration of the microservice external API
 ```javascript
 // Client configuration
 var config = {
-    endpoint: {
+    connection: {
         protocol: 'http',
         host: 'localhost', 
         port: 8007
@@ -142,10 +102,10 @@ var config = {
 Instantiate the client and open connection to the microservice
 ```javascript
 // Create the client instance
-var client = sdk.SessionsRestClient(config);
+var client = sdk.SessionsHttpClientV1(config);
 
 // Connect to the microservice
-client.open(function(err) {
+client.open(null, function(err) {
     if (err) {
         console.error('Connection to the microservice failed');
         console.error(err);
@@ -162,13 +122,11 @@ Now the client is ready to perform operations
 // Opens user session
 client.openSession(
     null,
-    user: {
-        id: '123',
-        name: 'Test User'
-    },
-    address: '192.168.1.1',
-    client: 'Test Client',
-    null,
+    '123', // User id
+    'Test User' // User name
+    '192.168.1.1', // Address
+    'Test Client', // Client
+    null, // Session data
     function (err, session) {
         ...
     }
@@ -179,7 +137,7 @@ client.openSession(
 // Get user sessions
 client.getSessions(
     null,
-    '123',
+    null,
     function(err, sessions) {
     ...    
     }

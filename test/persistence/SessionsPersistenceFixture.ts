@@ -1,100 +1,99 @@
 let async = require('async');
 let assert = require('chai').assert;
 
-import { ISessionsPersistence } from '../../src/persistence/ISessionsPersistence';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
+import { AnyValueMap } from 'pip-services-commons-node';
 
-let USER = {
-    id: '123',
-    name: 'Test User'
-};
+import { ISessionsPersistence } from '../../src/persistence/ISessionsPersistence';
+import { SessionV1 } from '../../src/data/version1/SessionV1';
+
+let SESSION1: SessionV1 = new SessionV1(null, '1', 'User 1');
+let SESSION2: SessionV1 = new SessionV1(null, '2', 'User 2');
 
 export class SessionsPersistenceFixture {
-    private _db: ISessionsPersistence;
+    private _persistence: ISessionsPersistence;
     
-    constructor(db) {
-        assert.isNotNull(db);
-        this._db = db;
+    constructor(persistence) {
+        assert.isNotNull(persistence);
+        this._persistence = persistence;
     }
+                
+    public testCrudOperations(done) {
+        let session1;
+        let session2;
 
-    testOpenSession(done) {
-        var session1;
-        
         async.series([
-        // Create a new session
+        // Create one session
             (callback) => {
-                this._db.openSession(
+                this._persistence.create(
                     null,
-                    USER,
-                    'localhost',
-                    'test',
-                    'abc',
+                    SESSION1,
                     (err, session) => {
                         assert.isNull(err);
-                        
+
                         assert.isObject(session);
                         assert.isNotNull(session.id);
-                        assert.isNotNull(session.last_request);
-                        assert.equal(session.address, 'localhost');
-                        assert.equal(session.client, 'test');
-                        assert.equal(session.data, 'abc');
+                        assert.isNotNull(session.open_time);
+                        assert.isNotNull(session.request_time);
+                        assert.equal(session.user_id, SESSION1.user_id);
 
                         session1 = session;
-                        
+
                         callback();
                     }
                 );
             },
-        // Store session data
+        // Create another session
             (callback) => {
-                this._db.storeSessionData(
+                this._persistence.create(
                     null,
-                    USER.id,
-                    session1.id,
-                    'xyz',
-                    (err) => {
-                        assert.isNull(err);
-                        
-                        callback();
-                    }
-                );
-            },
-        // Open created session
-            (callback) => {
-                this._db.loadSession(
-                    null,
-                    USER.id,
-                    session1.id,
+                    SESSION2,
                     (err, session) => {
                         assert.isNull(err);
-                        
-                        assert.isObject(session);
-                        assert.equal(session.id, session1.id);
-                        assert.isNotNull(session.last_request);
-                        assert.equal(session.address, 'localhost');
-                        assert.equal(session.client, 'test');
-                        assert.equal(session.data, 'xyz');
 
-                        assert.isDefined(session.user);
-                        assert.equal(session.user.id, USER.id);
-                        assert.equal(session.user.name, USER.name);
+                        assert.isObject(session);
+                        assert.isNotNull(session.id);
+                        assert.isNotNull(session.open_time);
+                        assert.isNotNull(session.request_time);
+                        assert.equal(session.user_id, SESSION2.user_id);
+
+                        session2 = session;
 
                         callback();
                     }
                 );
             },
-        // Get open sessions
+        // Partially update
             (callback) => {
-                this._db.getSessions(
+                this._persistence.updatePartially(
                     null,
-                    USER.id,
-                    (err, sessions) => {
+                    session1.id,
+                    AnyValueMap.fromTuples(
+                        "data", "123"
+                    ),
+                    (err, session) => {
                         assert.isNull(err);
-                        
-                        assert.lengthOf(sessions, 1);
-                        var session = sessions[0];
 
-                        assert.equal(session.address, 'localhost');
-                        assert.equal(session.client, 'test');
+                        assert.isObject(session);
+                        assert.equal(session1.id, session.id);
+                        assert.equal("123", session.data);
+
+                        callback();
+                    }
+                );
+            },
+        // Get user sessions
+            (callback) => {
+                this._persistence.getPageByFilter(
+                    null,
+                    FilterParams.fromTuples('user_id', '1'),
+                    new PagingParams(),
+                    (err, events) => {
+                        assert.isNull(err);
+
+                        assert.isObject(events);
+                        assert.lengthOf(events.data, 1);
 
                         callback();
                     }
@@ -102,56 +101,4 @@ export class SessionsPersistenceFixture {
             }
         ], done);
     }
-
-    testCloseSession(done) {
-        async.series([
-        // Create a new session
-            (callback) => {
-                this._db.openSession(
-                    null,
-                    USER,
-                    'localhost',
-                    'test',
-                    null,
-                    (err, session) => {
-                        assert.isNull(err);
-
-                        assert.isObject(session);
-                        assert.isNotNull(session.last_request);
-
-                        callback();
-                    }
-                );
-            },
-        // Close session
-            (callback) => {
-                this._db.closeSession(
-                    null,
-                    USER.id,
-                    'localhost',
-                    'test',
-                    (err) => {
-                        assert.isNull(err);
-
-                        callback();
-                    }
-                );
-            },
-        // Get open sessions
-            (callback) => {
-                this._db.getSessions(
-                    null,
-                    USER.id,
-                    (err, sessions) => {
-                        assert.isNull(err);
-                        
-                        assert.lengthOf(sessions, 0);
-
-                        callback();
-                    }
-                );
-            }
-        ], done);
-    }
-
 }

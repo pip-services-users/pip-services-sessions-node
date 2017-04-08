@@ -1,10 +1,26 @@
-import { IBusinessLogic } from 'pip-services-runtime-node';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
+import { DataPage } from 'pip-services-commons-node';
 
-export interface ISessionsBusinessLogic extends IBusinessLogic {
-    getSessions(correlationId: string, userId: string, callback: any): void;
-    loadSession(correlationId: string, userId: string, sessionId: string, callback: any): void;
-    openSession(correlationId: string, user: any, address: string, client: string, data: any, callback: any): void;
-    storeSessionData(correlationId: string, userId: string, sessionId: string, data: any, callback: any): void;
-    closeSession(correlationId: string, userId: string, address: string, client: string, callback: any): void;
-    deleteSession(correlationId: string, userId: string, sessionId: string, callback: any): void;
+import { SessionV1 } from '../data/version1/SessionV1';
+
+export interface ISessionsBusinessLogic {
+    getSessions(correlationId: string, filter: FilterParams, paging: PagingParams,
+        callback: (err: any, page: DataPage<SessionV1>) => void): void;
+    
+    getSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
+
+    openSession(correlationId: string, user_id: string, user_name: string,
+        address: string, client: string, user: any, data: any,
+        callback: (err: any, session: SessionV1) => void): void;
+    
+    storeSessionData(correlationId: string, sessionId: string, data: any,
+        callback: (err: any, session: SessionV1) => void): void;
+    
+    closeSession(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
+
+    deleteSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
 }

@@ -1,8 +1,10 @@
-import { CommandSet } from 'pip-services-runtime-node';
-import { ICommand } from 'pip-services-runtime-node';
-import { Command } from 'pip-services-runtime-node';
-import { Schema } from 'pip-services-runtime-node';
-import { DynamicMap } from 'pip-services-runtime-node';
+import { CommandSet } from 'pip-services-commons-node';
+import { ICommand } from 'pip-services-commons-node';
+import { Command } from 'pip-services-commons-node';
+import { Schema } from 'pip-services-commons-node';
+import { Parameters } from 'pip-services-commons-node';
+import { FilterParams } from 'pip-services-commons-node';
+import { PagingParams } from 'pip-services-commons-node';
 
 import { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
 
@@ -16,111 +18,82 @@ export class SessionsCommandSet extends CommandSet {
 
         // Register commands to the database
 		this.addCommand(this.makeGetSessionsCommand());
-		this.addCommand(this.makeLoadSessionCommand());
+		this.addCommand(this.makeGetSessionByIdCommand());
 		this.addCommand(this.makeOpenSessionCommand());
 		this.addCommand(this.makeStoreSessionDataCommand());
 		this.addCommand(this.makeCloseSessionCommand());
-		this.addCommand(this.makeDeleteSessionCommand());
+		this.addCommand(this.makeDeleteSessionByIdCommand());
     }
 
 	private makeGetSessionsCommand(): ICommand {
 		return new Command(
-			this._logic,
 			"get_sessions",
-			new Schema()
-				.withProperty("user_id", "string")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
-                let userId = args.getNullableString("user_id");
-                this._logic.getSessions(correlationId, userId, callback);
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let filter = FilterParams.fromValue(args.get("filter"));
+                let paging = PagingParams.fromValue(args.get("paging"));
+                this._logic.getSessions(correlationId, filter, paging, callback);
             }
 		);
 	}
 
-	private makeLoadSessionCommand(): ICommand {
+	private makeGetSessionByIdCommand(): ICommand {
 		return new Command(
-			this._logic,
-			"load_session",
-			new Schema()
-				.withProperty("user_id", "string")
-				.withProperty("session_id", "string")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
-                let userId = args.getNullableString("user_id");
-                let sessionId = args.getNullableString("session_id");
-                this._logic.loadSession(correlationId, userId, sessionId, callback);
+			"get_session_by_id",
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let sessionId = args.getAsNullableString("session_id");
+                this._logic.getSessionById(correlationId, sessionId, callback);
             }
 		);
 	}
 
 	private makeOpenSessionCommand(): ICommand {
 		return new Command(
-			this._logic,
 			"open_session",
-			new Schema()
-				.withProperty("user", "object")
-				.withProperty("address", "string")
-				.withProperty("client", "string")
-				.withOptionalProperty("data", "any")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let userId = args.getAsNullableString("user_id");
+                let userName = args.getAsNullableString("user_name");
+                let address = args.getAsNullableString("address");
+                let client = args.getAsNullableString("client");
                 let user = args.get("user");
-                let address = args.getNullableString("address");
-                let client = args.getNullableString("client");
                 let data = args.get("data");
-                this._logic.openSession(correlationId, user, address, client, data, callback);
+                this._logic.openSession(correlationId, userId, userName, address, client, user, data, callback);
             }
 		);
 	}
 
 	private makeStoreSessionDataCommand(): ICommand {
 		return new Command(
-			this._logic,
 			"store_session_data",
-			new Schema()
-				.withProperty("user_id", "string")
-				.withProperty("session_id", "string")
-				.withOptionalProperty("data", "any")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
-                let userId = args.getNullableString("user_id");
-                let sessionId = args.getNullableString("session_id");
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let sessionId = args.getAsNullableString("session_id");
                 let data = args.get("data");
-                this._logic.storeSessionData(correlationId, userId, sessionId, data, callback);
+                this._logic.storeSessionData(correlationId, sessionId, data, callback);
             }
 		);
 	}
 
 	private makeCloseSessionCommand(): ICommand {
 		return new Command(
-			this._logic,
 			"close_session",
-			new Schema()
-				.withProperty("user_id", "string")
-				.withProperty("address", "string")
-				.withProperty("client", "string")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
-                let userId = args.getNullableString("user_id");
-                let address = args.getNullableString("address");
-                let client = args.getNullableString("client");
-                this._logic.closeSession(correlationId, userId, address, client, callback);
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let sessionId = args.getAsNullableString("session_id");
+                this._logic.closeSession(correlationId, sessionId, callback);
             }
 		);
 	}
     
-	private makeDeleteSessionCommand(): ICommand {
+	private makeDeleteSessionByIdCommand(): ICommand {
 		return new Command(
-			this._logic,
-			"delete_session",
-			new Schema()
-				.withProperty("user_id", "string")
-				.withProperty("session_id", "string")
-			,
-            (correlationId: string, args: DynamicMap, callback: (err: any, result: any) => void) => {
-                let userId = args.getNullableString("user_id");
-                let sessionId = args.getNullableString("session_id");
-                this._logic.deleteSession(correlationId, userId, sessionId, callback);
+			"delete_session_by_id",
+			null,
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let sessionId = args.getAsNullableString("session_id");
+                this._logic.deleteSessionById(correlationId, sessionId, callback);
             }
 		);
 	}

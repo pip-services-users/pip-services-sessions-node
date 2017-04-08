@@ -1,43 +1,28 @@
-import { ComponentSet } from 'pip-services-runtime-node';
-import { ComponentConfig } from 'pip-services-runtime-node';
-import { DynamicMap } from 'pip-services-runtime-node';
+import { ConfigParams } from 'pip-services-commons-node';
 
 import { SessionsFilePersistence } from '../../src/persistence/SessionsFilePersistence';
 import { SessionsPersistenceFixture } from './SessionsPersistenceFixture';
 
-let config = ComponentConfig.fromValue({
-    descriptor: {
-        type: 'file'
-    },
-    options: {
-        path: './data/sessions.test.json',
-        data: []
-    }
-});
-
 suite('SessionsFilePersistence', ()=> {
-    let db, fixture;
+    let persistence: SessionsFilePersistence;
+    let fixture: SessionsPersistenceFixture;
     
     setup((done) => {
-        db = new SessionsFilePersistence();
-        db.configure(config);
+        persistence = new SessionsFilePersistence('./data/sessions.test.json');
 
-        fixture = new SessionsPersistenceFixture(db);
+        fixture = new SessionsPersistenceFixture(persistence);
         
-        db.link(new ComponentSet());
-        db.open(done);
+        persistence.open(null, (err) => {
+            if (err) done(err);
+            else persistence.clear(null, done);
+        });
     });
     
     teardown((done) => {
-        db.close(done);
+        persistence.close(null, done);
     });
         
-    test('Open Session', (done) => {
-        fixture.testOpenSession(done);
+    test('CRUD Operations', (done) => {
+        fixture.testCrudOperations(done);
     });
-
-    test('Close Session', (done) => {
-        fixture.testCloseSession(done);
-    });
-
 });

@@ -1,0 +1,64 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const pip_services_commons_node_1 = require("pip-services-commons-node");
+const pip_services_commons_node_2 = require("pip-services-commons-node");
+const pip_services_commons_node_3 = require("pip-services-commons-node");
+const pip_services_commons_node_4 = require("pip-services-commons-node");
+class SessionsCommandSet extends pip_services_commons_node_1.CommandSet {
+    constructor(logic) {
+        super();
+        this._logic = logic;
+        // Register commands to the database
+        this.addCommand(this.makeGetSessionsCommand());
+        this.addCommand(this.makeGetSessionByIdCommand());
+        this.addCommand(this.makeOpenSessionCommand());
+        this.addCommand(this.makeStoreSessionDataCommand());
+        this.addCommand(this.makeCloseSessionCommand());
+        this.addCommand(this.makeDeleteSessionByIdCommand());
+    }
+    makeGetSessionsCommand() {
+        return new pip_services_commons_node_2.Command("get_sessions", null, (correlationId, args, callback) => {
+            let filter = pip_services_commons_node_3.FilterParams.fromValue(args.get("filter"));
+            let paging = pip_services_commons_node_4.PagingParams.fromValue(args.get("paging"));
+            this._logic.getSessions(correlationId, filter, paging, callback);
+        });
+    }
+    makeGetSessionByIdCommand() {
+        return new pip_services_commons_node_2.Command("get_session_by_id", null, (correlationId, args, callback) => {
+            let sessionId = args.getAsNullableString("session_id");
+            this._logic.getSessionById(correlationId, sessionId, callback);
+        });
+    }
+    makeOpenSessionCommand() {
+        return new pip_services_commons_node_2.Command("open_session", null, (correlationId, args, callback) => {
+            let userId = args.getAsNullableString("user_id");
+            let userName = args.getAsNullableString("user_name");
+            let address = args.getAsNullableString("address");
+            let client = args.getAsNullableString("client");
+            let user = args.get("user");
+            let data = args.get("data");
+            this._logic.openSession(correlationId, userId, userName, address, client, user, data, callback);
+        });
+    }
+    makeStoreSessionDataCommand() {
+        return new pip_services_commons_node_2.Command("store_session_data", null, (correlationId, args, callback) => {
+            let sessionId = args.getAsNullableString("session_id");
+            let data = args.get("data");
+            this._logic.storeSessionData(correlationId, sessionId, data, callback);
+        });
+    }
+    makeCloseSessionCommand() {
+        return new pip_services_commons_node_2.Command("close_session", null, (correlationId, args, callback) => {
+            let sessionId = args.getAsNullableString("session_id");
+            this._logic.closeSession(correlationId, sessionId, callback);
+        });
+    }
+    makeDeleteSessionByIdCommand() {
+        return new pip_services_commons_node_2.Command("delete_session_by_id", null, (correlationId, args, callback) => {
+            let sessionId = args.getAsNullableString("session_id");
+            this._logic.deleteSessionById(correlationId, sessionId, callback);
+        });
+    }
+}
+exports.SessionsCommandSet = SessionsCommandSet;
+//# sourceMappingURL=SessionsCommandSet.js.map

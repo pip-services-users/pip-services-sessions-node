@@ -29,24 +29,28 @@ seneca.act(
 );
 ```
 
-* [Session class](#class1)
+* [SessionV1 class](#class1)
 * [cmd: 'get_sessions'](#operation1)
-* [cmd: 'load_session'](#operation2)
+* [cmd: 'get_session_by_id'](#operation2)
 * [cmd: 'open_session'](#operation3)
 * [cmd: 'store_session_data'](#operation4)
 * [cmd: 'close_session'](#operation5)
-* [cmd: 'delete_session'](#operation6)
+* [cmd: 'delete_session_by_id'](#operation6)
 
 ## Data types
 
-### <a name="class1"></a> Session class
+### <a name="class1"></a> SessionV1 class
 
 Represents an open user session
 
 **Properties:**
 - id: string - unique session id
-- opened: Date - date and time when session was opened
-- last_request: Date - date and time when last request was processed
+- user_id: string - unique user id
+- user_name: string - Full user name just for information
+- active: boolean - True if session is still active
+- open_time: Date - date and time when session was opened
+- request_time: Date - date and time when last request was processed
+- close_time: Date - date and time when session was closed
 - address: string - client address
 - client: string - client application name
 - user: Object - information about user
@@ -59,70 +63,76 @@ Represents an open user session
 Retrieves all opened user sessions.
 
 **Arguments:** 
-- user_id: string - unique user id
+- filter: object - filter parameters
+  - search: string - (optional) search substring to find in source, type or message
+  - type: string - (optional) type events
+  - source: string - (optional) server where events occured
+  - severity: number - (optional) severity of events
+  - from_time: Date - (optional) start of the time range
+  - to_time: Date - (optional) end of the time range
+- paging: object - paging parameters
+  - skip: int - (optional) start of page (default: 0)
+  - take: int - (optional) page length (default: 100)
+  - total: boolean - (optional) include total counter into paged result (default: false)
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: [Session] - all opened user sessions
+- result: DataPage<SessionV1> - page of retrieved user sessions
 
-### <a name="operation2"></a> Cmd: 'load_session'
+### <a name="operation2"></a> Cmd: 'get\_session\_by_id'
 
 Load opened user session by user id and session id.
 
-**Arguments:** 
-- user_id: string - unique user id
+**Request body:** 
 - session_id: string - unique session id
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: Session - open user session or null if session wasn't found
+- result: SessionV1 - open user session or null if session wasn't found
 
 ### <a name="operation3"></a> Cmd: 'open_session'
 
 Opens a new user session and stores user information in it.
 
-**Arguments:** 
-- user: Object - user information
-  - id: string - unique user id
-  - name: string - full user name
+**Request body:** 
+- user_id: string - unique user id
+- user_name: string - full user name
 - address: string - client address
 - client: string - client application name
-- data: Object - (optional) session data
+- data: Object - session data
+- user: Object - user data
 
 **Returns:**
 - err: Error - occured error or null for success
-- result: Session - newly opened user session or existing session if it was already opened for the same address and client
+- result: SessionV1 - newly opened user session or existing session if it was already opened for the same address and client
 
-### <a name="operation4"></a> Cmd: 'store_session_data'
+### <a name="operation4"></a> Cmd: 'store\_session\_data'
 
-Load opened user session by user id and session id.
+Stores session data
 
 **Arguments:** 
-- user_id: string - unique user id
 - session_id: string - unique session id
 - data: Object - session data
 
 **Returns:**
 - err: Error - occured error or null for success
+- result: SessionV1 - updated SessionV1 object
 
 ### <a name="operation5"></a> Cmd: 'close_session'
 
-Closes previously opened user session from specified host and client application
+Closes previously opened user session by its id
 
 **Arguments:** 
-- user_id: string - unique user id
-- address: string - client address
-- client: string - client application name
+- session_id: string - unique session id
 
 **Returns:**
 - err: Error - occured error or null for success
 
 ### <a name="operation6"></a> Cmd: 'delete_session'
 
-Closes session by specified user and session ids.
+Deletes session by specified session ids.
 
 **Arguments:** 
-- user_id: string - unique user id
 - session_id: string - unique session id
 
 **Returns:**
