@@ -39,10 +39,7 @@ As the starting point you can use example configuration from **config.example.ya
 
 Example of microservice configuration
 ```yaml
-- descriptor: "pip-services-container:container-info:default:default:1.0"
-  name: "pip-services-sessions"
-  description: "Sessions microservice"
-
+---
 - descriptor: "pip-services-commons:logger:console:default:1.0"
   level: "trace"
 
@@ -55,7 +52,7 @@ Example of microservice configuration
   connection:
     protocol: "http"
     host: "0.0.0.0"
-    port: 3000
+    port: 8080
 ```
  
 For more information on the microservice configuration see [Configuration Guide](Configuration.md).
@@ -94,7 +91,7 @@ var config = {
     connection: {
         protocol: 'http',
         host: 'localhost', 
-        port: 8007
+        port: 8080
     }
 };
 ```
