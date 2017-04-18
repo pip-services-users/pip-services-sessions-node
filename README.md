@@ -22,6 +22,53 @@ This microservice has no dependencies on other microservices.
   - [HTTP Version 1](doc/HttpProtocolV1.md)
   - [Seneca Version 1](doc/SenecaProtocolV1.md)
 
+##  Contract
+
+Logical contract of the microservice is presented below. For physical implementation (HTTP/REST, Thrift, Seneca, Lambda, etc.),
+please, refer to documentation of the specific protocol.
+
+```typescript
+class SessionV1 implements IStringIdentifiable {
+    /* Identification */
+    public id: string;
+    public user_id: string;
+    public user_name: string;
+    
+    /* Session info */
+    public active: boolean;
+    public open_time: Date;
+    public close_time: Date;
+    public request_time: Date;
+    public address: string;
+    public client: string;
+
+    /* Cached content */
+    public user: any;
+    public data: any;
+}
+
+interface ISessionsV1 {
+    getSessions(correlationId: string, filter: FilterParams, paging: PagingParams,
+        callback: (err: any, page: DataPage<SessionV1>) => void): void;
+    
+    getSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
+
+    openSession(correlationId: string, user_id: string, user_name: string,
+        address: string, client: string, user: any, data: any,
+        callback: (err: any, session: SessionV1) => void): void;
+    
+    storeSessionData(correlationId: string, sessionId: string, data: any,
+        callback: (err: any, session: SessionV1) => void): void;
+    
+    closeSession(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
+
+    deleteSessionById(correlationId: string, sessionId: string,
+        callback: (err: any, session: SessionV1) => void): void;
+}
+```
+
 ## Download
 
 Right now the only way to get the microservice is to check it out directly from github repository
