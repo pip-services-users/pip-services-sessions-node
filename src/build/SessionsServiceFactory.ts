@@ -8,7 +8,7 @@ import { SessionsController } from '../logic/SessionsController';
 import { SessionsHttpServiceV1 } from '../services/version1/SessionsHttpServiceV1';
 import { SessionsSenecaServiceV1 } from '../services/version1/SessionsSenecaServiceV1'; 
 
-export class SessionsFactory extends Factory {
+export class SessionsServiceFactory extends Factory {
 	public static Descriptor = new Descriptor("pip-services-sessions", "factory", "default", "default", "1.0");
 	public static MemoryPersistenceDescriptor = new Descriptor("pip-services-sessions", "persistence", "memory", "*", "1.0");
 	public static FilePersistenceDescriptor = new Descriptor("pip-services-sessions", "persistence", "file", "*", "1.0");
@@ -19,12 +19,12 @@ export class SessionsFactory extends Factory {
 	
 	constructor() {
 		super();
-		this.registerAsType(SessionsFactory.MemoryPersistenceDescriptor, SessionsMemoryPersistence);
-		this.registerAsType(SessionsFactory.FilePersistenceDescriptor, SessionsFilePersistence);
-		this.registerAsType(SessionsFactory.MongoDbPersistenceDescriptor, SessionsMongoDbPersistence);
-		this.registerAsType(SessionsFactory.ControllerDescriptor, SessionsController);
-		this.registerAsType(SessionsFactory.SenecaServiceDescriptor, SessionsSenecaServiceV1);
-		this.registerAsType(SessionsFactory.HttpServiceDescriptor, SessionsHttpServiceV1);
+		this.registerAsType(SessionsServiceFactory.MemoryPersistenceDescriptor, SessionsMemoryPersistence);
+		this.registerAsType(SessionsServiceFactory.FilePersistenceDescriptor, SessionsFilePersistence);
+		this.registerAsType(SessionsServiceFactory.MongoDbPersistenceDescriptor, SessionsMongoDbPersistence);
+		this.registerAsType(SessionsServiceFactory.ControllerDescriptor, SessionsController);
+		this.registerAsType(SessionsServiceFactory.SenecaServiceDescriptor, SessionsSenecaServiceV1);
+		this.registerAsType(SessionsServiceFactory.HttpServiceDescriptor, SessionsHttpServiceV1);
 	}
 	
 }

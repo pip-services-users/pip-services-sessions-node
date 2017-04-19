@@ -1,1 +1,1 @@
-export { SessionsFactory } from './SessionsFactory';
+export { SessionsServiceFactory } from './SessionsServiceFactory';
