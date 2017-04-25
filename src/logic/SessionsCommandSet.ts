@@ -11,12 +11,12 @@ import { FilterParamsSchema } from 'pip-services-commons-node';
 import { PagingParamsSchema } from 'pip-services-commons-node';
 import { DateTimeConverter } from 'pip-services-commons-node';
 
-import { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
+import { ISessionsController } from './ISessionsController';
 
 export class SessionsCommandSet extends CommandSet {
-    private _logic: ISessionsBusinessLogic;
+    private _logic: ISessionsController;
 
-    constructor(logic: ISessionsBusinessLogic) {
+    constructor(logic: ISessionsController) {
         super();
 
         this._logic = logic;

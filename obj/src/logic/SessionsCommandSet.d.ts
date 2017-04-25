@@ -1,8 +1,8 @@
 import { CommandSet } from 'pip-services-commons-node';
-import { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
+import { ISessionsController } from './ISessionsController';
 export declare class SessionsCommandSet extends CommandSet {
     private _logic;
-    constructor(logic: ISessionsBusinessLogic);
+    constructor(logic: ISessionsController);
     private makeGetSessionsCommand();
     private makeGetSessionByIdCommand();
     private makeOpenSessionCommand();

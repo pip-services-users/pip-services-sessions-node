@@ -1,2 +1,2 @@
-export { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
+export { ISessionsController } from './ISessionsController';
 export { SessionsController } from './SessionsController';

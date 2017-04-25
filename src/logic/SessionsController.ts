@@ -14,10 +14,10 @@ import { AnyValueMap } from 'pip-services-commons-node';
 
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from '../persistence/ISessionsPersistence';
-import { ISessionsBusinessLogic } from './ISessionsBusinessLogic';
+import { ISessionsController } from './ISessionsController';
 import { SessionsCommandSet } from './SessionsCommandSet';
 
-export class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsBusinessLogic {
+export class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsController {
     private static _defaultConfig: ConfigParams = ConfigParams.fromTuples(
         'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0'
     );

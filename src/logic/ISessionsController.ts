@@ -4,7 +4,7 @@ import { DataPage } from 'pip-services-commons-node';
 
 import { SessionV1 } from '../data/version1/SessionV1';
 
-export interface ISessionsBusinessLogic {
+export interface ISessionsController {
     getSessions(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<SessionV1>) => void): void;
     
