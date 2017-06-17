@@ -82,6 +82,22 @@ suite('SessionsLambdaFunction', ()=> {
                     }
                 );
             },
+        // Update session user
+            (callback) => {
+                lambda.act(
+                    {
+                        role: 'sessions',
+                        cmd: 'update_session_user',  
+                        session_id: session1.id,
+                        user: 'xyz'
+                    },
+                    (err) => {
+                        assert.isNull(err);
+
+                        callback();
+                    }
+                );
+            },
         // Open created session
             (callback) => {
                 lambda.act(

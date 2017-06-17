@@ -77,6 +77,18 @@ export class SessionsController implements IConfigurable, IReferenceable, IComma
             callback
         );
     }
+
+    public updateSessionUser(correlationId: string, sessionId: string, user: any,
+        callback: (err: any, session: SessionV1) => void): void {
+        this._persistence.updatePartially(
+            correlationId, sessionId, 
+            AnyValueMap.fromTuples(
+                'request_time', new Date(),
+                'user', user
+            ),
+            callback
+        );
+    }
     
     public closeSession(correlationId: string, sessionId: string,
         callback: (err: any, session: SessionV1) => void): void {

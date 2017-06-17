@@ -26,6 +26,7 @@ export class SessionsCommandSet extends CommandSet {
 		this.addCommand(this.makeGetSessionByIdCommand());
 		this.addCommand(this.makeOpenSessionCommand());
 		this.addCommand(this.makeStoreSessionDataCommand());
+		this.addCommand(this.makeUpdateSessionUserCommand());
 		this.addCommand(this.makeCloseSessionCommand());
 		this.addCommand(this.makeDeleteSessionByIdCommand());
     }
@@ -88,6 +89,20 @@ export class SessionsCommandSet extends CommandSet {
                 let sessionId = args.getAsNullableString("session_id");
                 let data = args.get("data");
                 this._logic.storeSessionData(correlationId, sessionId, data, callback);
+            }
+		);
+	}
+
+	private makeUpdateSessionUserCommand(): ICommand {
+		return new Command(
+			"update_session_user",
+			new ObjectSchema(true)
+				.withRequiredProperty('session_id', TypeCode.String)
+				.withRequiredProperty('user', null),
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                let sessionId = args.getAsNullableString("session_id");
+                let user = args.get("user");
+                this._logic.updateSessionUser(correlationId, sessionId, user, callback);
             }
 		);
 	}

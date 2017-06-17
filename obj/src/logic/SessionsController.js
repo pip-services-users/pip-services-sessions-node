@@ -37,6 +37,9 @@ class SessionsController {
     storeSessionData(correlationId, sessionId, data, callback) {
         this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'data', data), callback);
     }
+    updateSessionUser(correlationId, sessionId, user, callback) {
+        this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'user', user), callback);
+    }
     closeSession(correlationId, sessionId, callback) {
         this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('active', false, 'request_time', new Date(), 'close_time', new Date()), callback);
     }
