@@ -79,4 +79,31 @@ export class SessionsMemoryPersistence
 
         super.update(correlationId, item, callback);
     }
+
+    public closeExpired(correlation_id: string, request_time: Date, callback?: (err: any) => void): void {
+        let time = request_time.getTime();
+        let now = new Date();
+        let count = 0;
+
+        for (let item of this._items) {
+            if (item.active && item.request_time.getTime() < time) {
+                item.active = false;
+                item.close_time = now;
+                item.request_time = now;
+                item.data = null;
+                item.user = null;
+
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
+
+            this.save(correlation_id, callback);
+        } else {
+            if (callback) callback(null);
+        }
+    }
+
 }

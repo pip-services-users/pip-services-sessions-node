@@ -24,6 +24,9 @@ export interface ISessionsController {
     closeSession(correlationId: string, sessionId: string,
         callback: (err: any, session: SessionV1) => void): void;
 
+    closeExpiredSessions(correlationId: string,
+        callback: (err: any) => void): void;
+
     deleteSessionById(correlationId: string, sessionId: string,
         callback: (err: any, session: SessionV1) => void): void;
 }

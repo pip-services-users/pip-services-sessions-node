@@ -9,5 +9,6 @@ export interface ISessionsController {
     storeSessionData(correlationId: string, sessionId: string, data: any, callback: (err: any, session: SessionV1) => void): void;
     updateSessionUser(correlationId: string, sessionId: string, user: any, callback: (err: any, session: SessionV1) => void): void;
     closeSession(correlationId: string, sessionId: string, callback: (err: any, session: SessionV1) => void): void;
+    closeExpiredSessions(correlationId: string, callback: (err: any) => void): void;
     deleteSessionById(correlationId: string, sessionId: string, callback: (err: any, session: SessionV1) => void): void;
 }

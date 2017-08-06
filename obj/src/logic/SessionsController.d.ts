@@ -7,21 +7,30 @@ import { PagingParams } from 'pip-services-commons-node';
 import { DataPage } from 'pip-services-commons-node';
 import { ICommandable } from 'pip-services-commons-node';
 import { CommandSet } from 'pip-services-commons-node';
+import { IOpenable } from 'pip-services-commons-node';
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsController } from './ISessionsController';
-export declare class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsController {
+export declare class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsController, IOpenable {
     private static _defaultConfig;
+    private _logger;
     private _dependencyResolver;
     private _persistence;
     private _commandSet;
+    private _expireTimeout;
+    private _cleanupInterval;
+    private _cleanupTimer;
     configure(config: ConfigParams): void;
     setReferences(references: IReferences): void;
     getCommandSet(): CommandSet;
+    isOpened(): boolean;
+    open(correlationId: string, callback: (err: any) => void): void;
+    close(correlationId: string, callback: (err: any) => void): void;
     getSessions(correlationId: string, filter: FilterParams, paging: PagingParams, callback: (err: any, page: DataPage<SessionV1>) => void): void;
     getSessionById(correlationId: string, sessionId: string, callback: (err: any, session: SessionV1) => void): void;
     openSession(correlationId: string, user_id: string, user_name: string, address: string, client: string, user: any, data: any, callback: (err: any, session: SessionV1) => void): void;
     storeSessionData(correlationId: string, sessionId: string, data: any, callback: (err: any, session: SessionV1) => void): void;
     updateSessionUser(correlationId: string, sessionId: string, user: any, callback: (err: any, session: SessionV1) => void): void;
     closeSession(correlationId: string, sessionId: string, callback: (err: any, session: SessionV1) => void): void;
+    closeExpiredSessions(correlationId: string, callback: (err: any) => void): void;
     deleteSessionById(correlationId: string, sessionId: string, callback: (err: any, session: SessionV1) => void): void;
 }

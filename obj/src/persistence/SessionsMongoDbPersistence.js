@@ -50,6 +50,29 @@ class SessionsMongoDbPersistence extends pip_services_data_node_1.IdentifiableMo
         item.request_time = now;
         super.update(correlationId, item, callback);
     }
+    closeExpired(correlation_id, request_time, callback) {
+        let criteria = {
+            request_time: { $lt: request_time },
+            active: true
+        };
+        let newItem = {
+            $set: {
+                active: false,
+                request_time: new Date(),
+                close_time: new Date(),
+                user: null,
+                data: null
+            }
+        };
+        let options = {
+            multi: true
+        };
+        this._model.update(criteria, newItem, options, (err, count) => {
+            if (count > 0)
+                this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
+            callback(err);
+        });
+    }
 }
 exports.SessionsMongoDbPersistence = SessionsMongoDbPersistence;
 //# sourceMappingURL=SessionsMongoDbPersistence.js.map

@@ -11,26 +11,42 @@ import { ICommandable } from 'pip-services-commons-node';
 import { CommandSet } from 'pip-services-commons-node';
 import { IdGenerator } from 'pip-services-commons-node';
 import { AnyValueMap } from 'pip-services-commons-node';
+import { IOpenable } from 'pip-services-commons-node';
+import { FixedRateTimer } from 'pip-services-commons-node';
+import { CompositeLogger } from 'pip-services-commons-node';
 
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from '../persistence/ISessionsPersistence';
 import { ISessionsController } from './ISessionsController';
 import { SessionsCommandSet } from './SessionsCommandSet';
 
-export class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsController {
+export class SessionsController implements IConfigurable, IReferenceable, ICommandable, ISessionsController, IOpenable {
     private static _defaultConfig: ConfigParams = ConfigParams.fromTuples(
+        'options.cleanup_interval', 900000,
+        'options.expire_timeout', 24 * 3600000,
+
         'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0'
     );
 
+    private _logger: CompositeLogger = new CompositeLogger();
     private _dependencyResolver: DependencyResolver = new DependencyResolver(SessionsController._defaultConfig);
     private _persistence: ISessionsPersistence;
     private _commandSet: SessionsCommandSet;
 
+    private _expireTimeout: number = 24 * 3600000;
+    private _cleanupInterval: number = 900000;
+    private _cleanupTimer: FixedRateTimer;
+
     public configure(config: ConfigParams): void {
+        this._expireTimeout = config.getAsLongWithDefault('options.expire_timeout', this._expireTimeout);
+        this._cleanupInterval = config.getAsLongWithDefault('options.cleanup_interval', this._cleanupInterval);
+
+        this._logger.configure(config);
         this._dependencyResolver.configure(config);
     }
 
     public setReferences(references: IReferences): void {
+        this._logger.setReferences(references);
         this._dependencyResolver.setReferences(references);
         this._persistence = this._dependencyResolver.getOneRequired<ISessionsPersistence>('persistence');
     }
@@ -41,6 +57,34 @@ export class SessionsController implements IConfigurable, IReferenceable, IComma
         return this._commandSet;
     }
 
+    public isOpened(): boolean {
+        return this._cleanupTimer != null;
+    }
+
+    public open(correlationId: string, callback: (err: any) => void): void {
+        if (this._cleanupTimer) {
+            if (callback) callback(null);
+            return;
+        }
+
+        this._cleanupTimer = new FixedRateTimer(() => {
+            this._logger.info(correlationId, 'Closing expired user sessions');
+            this.closeExpiredSessions(correlationId, null);
+        }, this._cleanupInterval);
+        this._cleanupTimer.start();
+
+        if (callback) callback(null);
+    }
+
+    public close(correlationId: string, callback: (err: any) => void): void {
+        if (this._cleanupTimer) {
+            this._cleanupTimer.stop();
+            this._cleanupTimer = null;
+        }
+
+        if (callback) callback(null);
+    }
+    
     public getSessions(correlationId: string, filter: FilterParams, paging: PagingParams,
         callback: (err: any, page: DataPage<SessionV1>) => void): void {
         this._persistence.getPageByFilter(correlationId, filter, paging, callback);
@@ -97,12 +141,21 @@ export class SessionsController implements IConfigurable, IReferenceable, IComma
             AnyValueMap.fromTuples(
                 'active', false,
                 'request_time', new Date(),
-                'close_time', new Date()
+                'close_time', new Date(), 
+                'data', null,
+                'user', null
             ),
             callback
         );
     }
 
+    public closeExpiredSessions(correlationId: string,
+        callback: (err: any) => void): void {
+        let now = new Date().getTime();
+        let requestTime = new Date(now - this._expireTimeout);
+        this._persistence.closeExpired(correlationId, requestTime, callback);
+    }
+    
     public deleteSessionById(correlationId: string, sessionId: string,
         callback: (err: any, session: SessionV1) => void): void {
         this._persistence.deleteById(correlationId, sessionId, callback);

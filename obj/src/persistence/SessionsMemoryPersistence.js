@@ -56,6 +56,29 @@ class SessionsMemoryPersistence extends pip_services_data_node_1.IdentifiableMem
         item.request_time = now;
         super.update(correlationId, item, callback);
     }
+    closeExpired(correlation_id, request_time, callback) {
+        let time = request_time.getTime();
+        let now = new Date();
+        let count = 0;
+        for (let item of this._items) {
+            if (item.active && item.request_time.getTime() < time) {
+                item.active = false;
+                item.close_time = now;
+                item.request_time = now;
+                item.data = null;
+                item.user = null;
+                count++;
+            }
+        }
+        if (count > 0) {
+            this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
+            this.save(correlation_id, callback);
+        }
+        else {
+            if (callback)
+                callback(null);
+        }
+    }
 }
 exports.SessionsMemoryPersistence = SessionsMemoryPersistence;
 //# sourceMappingURL=SessionsMemoryPersistence.js.map

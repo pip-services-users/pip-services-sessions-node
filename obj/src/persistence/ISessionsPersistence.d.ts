@@ -12,4 +12,5 @@ export interface ISessionsPersistence extends IGetter<SessionV1, string>, IWrite
     update(correlation_id: string, item: SessionV1, callback?: (err: any, item: SessionV1) => void): void;
     updatePartially(correlation_id: string, id: string, data: AnyValueMap, callback?: (err: any, item: SessionV1) => void): void;
     deleteById(correlation_id: string, id: string, callback?: (err: any, item: SessionV1) => void): void;
+    closeExpired(correlation_id: string, request_time: Date, callback?: (err: any) => void): void;
 }

@@ -19,6 +19,7 @@ class SessionsCommandSet extends pip_services_commons_node_1.CommandSet {
         this.addCommand(this.makeStoreSessionDataCommand());
         this.addCommand(this.makeUpdateSessionUserCommand());
         this.addCommand(this.makeCloseSessionCommand());
+        this.addCommand(this.makeCloseExpiredSessionsCommand());
         this.addCommand(this.makeDeleteSessionByIdCommand());
     }
     makeGetSessionsCommand() {
@@ -77,6 +78,13 @@ class SessionsCommandSet extends pip_services_commons_node_1.CommandSet {
             .withRequiredProperty('session_id', pip_services_commons_node_6.TypeCode.String), (correlationId, args, callback) => {
             let sessionId = args.getAsNullableString("session_id");
             this._logic.closeSession(correlationId, sessionId, callback);
+        });
+    }
+    makeCloseExpiredSessionsCommand() {
+        return new pip_services_commons_node_2.Command("close_expired_sessions", new pip_services_commons_node_5.ObjectSchema(true), (correlationId, args, callback) => {
+            this._logic.closeExpiredSessions(correlationId, (err) => {
+                callback(err, null);
+            });
         });
     }
     makeDeleteSessionByIdCommand() {

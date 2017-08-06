@@ -22,4 +22,6 @@ export interface ISessionsPersistence
     updatePartially(correlation_id: string, id: string, data: AnyValueMap, callback?: (err: any, item: SessionV1) => void): void;
     
     deleteById(correlation_id: string, id: string, callback?: (err: any, item: SessionV1) => void): void;
+
+    closeExpired(correlation_id: string, request_time: Date, callback?: (err: any) => void): void;
 }

@@ -9,5 +9,6 @@ export declare class SessionsCommandSet extends CommandSet {
     private makeStoreSessionDataCommand();
     private makeUpdateSessionUserCommand();
     private makeCloseSessionCommand();
+    private makeCloseExpiredSessionsCommand();
     private makeDeleteSessionByIdCommand();
 }

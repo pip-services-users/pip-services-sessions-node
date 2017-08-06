@@ -28,6 +28,7 @@ export class SessionsCommandSet extends CommandSet {
 		this.addCommand(this.makeStoreSessionDataCommand());
 		this.addCommand(this.makeUpdateSessionUserCommand());
 		this.addCommand(this.makeCloseSessionCommand());
+		this.addCommand(this.makeCloseExpiredSessionsCommand());
 		this.addCommand(this.makeDeleteSessionByIdCommand());
     }
 
@@ -118,7 +119,19 @@ export class SessionsCommandSet extends CommandSet {
             }
 		);
 	}
-    
+
+	private makeCloseExpiredSessionsCommand(): ICommand {
+		return new Command(
+			"close_expired_sessions",
+			new ObjectSchema(true),
+            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+                this._logic.closeExpiredSessions(correlationId, (err) => {
+					callback(err, null);
+				});
+            }
+		);
+	}
+	
 	private makeDeleteSessionByIdCommand(): ICommand {
 		return new Command(
 			"delete_session_by_id",
