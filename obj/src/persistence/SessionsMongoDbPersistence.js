@@ -70,7 +70,8 @@ class SessionsMongoDbPersistence extends pip_services_data_node_1.IdentifiableMo
         this._model.update(criteria, newItem, options, (err, count) => {
             if (count > 0)
                 this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
-            callback(err);
+            if (callback)
+                callback(err);
         });
     }
 }

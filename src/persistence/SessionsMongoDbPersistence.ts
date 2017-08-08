@@ -99,7 +99,7 @@ export class SessionsMongoDbPersistence
             if (count > 0)
                 this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
     
-            callback(err);
+            if (callback) callback(err);
         });
     }
 
