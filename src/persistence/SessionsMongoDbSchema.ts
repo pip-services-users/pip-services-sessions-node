@@ -7,7 +7,7 @@ export let SessionsMongoDbSchema = function(collection?: string) {
     let schema = new Schema(
         {
             /* Identification */
-            _id: { type: String, required: true, unique: true },
+            _id: { type: String },
             user_id: { type: String, required: true, index: true },
             user_name: { type: String, required: false },
             
