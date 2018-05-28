@@ -18,7 +18,7 @@ if (-not (Test-Path -Path "docker/id_rsa")) {
     if ($env:GIT_PRIVATE_KEY -ne $null) {
         $decodedGitPrivateKey = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($env:GIT_PRIVATE_KEY))
         Set-Content -Path "docker/id_rsa" -Value $decodedGitPrivateKey
-     else {
+    } else {
         Copy-Item -Path "~/.ssh/id_rsa" -Destination "docker"
     }
 }
