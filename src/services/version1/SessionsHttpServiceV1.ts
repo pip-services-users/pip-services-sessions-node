@@ -3,7 +3,7 @@ import { CommandableHttpService } from 'pip-services-net-node';
 
 export class SessionsHttpServiceV1 extends CommandableHttpService {
     public constructor() {
-        super('sessions');
+        super('v1/sessions');
         this._dependencyResolver.put('controller', new Descriptor('pip-services-sessions', 'controller', 'default', '*', '1.0'));
     }
 }

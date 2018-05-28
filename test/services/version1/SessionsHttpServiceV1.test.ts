@@ -58,7 +58,7 @@ suite('SessionsHttpServiceV1', ()=> {
         async.series([
         // Create a new session
             (callback) => {
-                rest.post('/sessions/open_session',
+                rest.post('/v1/sessions/open_session',
                     {
                         user_id: '1',
                         user_name: 'User 1',
@@ -86,7 +86,7 @@ suite('SessionsHttpServiceV1', ()=> {
             },
         // Store session data
             (callback) => {
-                rest.post('/sessions/store_session_data',
+                rest.post('/v1/sessions/store_session_data',
                     { 
                         session_id: session1.id,
                         data: 'xyz' 
@@ -100,7 +100,7 @@ suite('SessionsHttpServiceV1', ()=> {
             },
         // Get opened session
             (callback) => {
-                rest.post('/sessions/get_session_by_id',
+                rest.post('/v1/sessions/get_session_by_id',
                     {
                         session_id: session1.id
                     },
@@ -118,7 +118,7 @@ suite('SessionsHttpServiceV1', ()=> {
             },
         // Get open sessions
             (callback) => {
-                rest.post('/sessions/get_sessions',
+                rest.post('/v1/sessions/get_sessions',
                     {
                         filter: { user_id: '1' }                        
                     },
@@ -144,7 +144,7 @@ suite('SessionsHttpServiceV1', ()=> {
         async.series([
         // Create a new session
             (callback) => {
-                rest.post('/sessions/open_session',
+                rest.post('/v1/sessions/open_session',
                     {
                         user_id: '1',
                         user_name: 'User 1',
@@ -165,7 +165,7 @@ suite('SessionsHttpServiceV1', ()=> {
             },
         // Close session
             (callback) => {
-                rest.post('/sessions/close_session',
+                rest.post('/v1/sessions/close_session',
                     {
                         session_id: session1.id
                     },
@@ -178,7 +178,7 @@ suite('SessionsHttpServiceV1', ()=> {
             },
         // Get open sessions
             (callback) => {
-                rest.post('/sessions/get_sessions',
+                rest.post('/v1/sessions/get_sessions',
                     {
                         filter: {
                             user_id: '1',
