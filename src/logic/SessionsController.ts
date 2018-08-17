@@ -13,7 +13,7 @@ import { IdGenerator } from 'pip-services-commons-node';
 import { AnyValueMap } from 'pip-services-commons-node';
 import { IOpenable } from 'pip-services-commons-node';
 import { FixedRateTimer } from 'pip-services-commons-node';
-import { CompositeLogger } from 'pip-services-commons-node';
+import { CompositeLogger } from 'pip-services-components-node';
 
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from '../persistence/ISessionsPersistence';
@@ -57,7 +57,7 @@ export class SessionsController implements IConfigurable, IReferenceable, IComma
         return this._commandSet;
     }
 
-    public isOpened(): boolean {
+    public isOpen(): boolean {
         return this._cleanupTimer != null;
     }
 

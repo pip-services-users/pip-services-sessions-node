@@ -1,6 +1,6 @@
 import { FilterParams } from 'pip-services-commons-node';
 import { PagingParams } from 'pip-services-commons-node';
-import { IdentifiableMongoDbPersistence } from 'pip-services-data-node';
+import { IdentifiableMongoDbPersistence } from 'pip-services-mongodb-node';
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from './ISessionsPersistence';
 export declare class SessionsMongoDbPersistence extends IdentifiableMongoDbPersistence<SessionV1, string> implements ISessionsPersistence {

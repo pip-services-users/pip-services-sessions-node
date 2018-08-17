@@ -5,12 +5,12 @@ const pip_services_commons_node_2 = require("pip-services-commons-node");
 const pip_services_commons_node_3 = require("pip-services-commons-node");
 const pip_services_commons_node_4 = require("pip-services-commons-node");
 const pip_services_commons_node_5 = require("pip-services-commons-node");
-const pip_services_commons_node_6 = require("pip-services-commons-node");
+const pip_services_components_node_1 = require("pip-services-components-node");
 const SessionV1_1 = require("../data/version1/SessionV1");
 const SessionsCommandSet_1 = require("./SessionsCommandSet");
 class SessionsController {
     constructor() {
-        this._logger = new pip_services_commons_node_6.CompositeLogger();
+        this._logger = new pip_services_components_node_1.CompositeLogger();
         this._dependencyResolver = new pip_services_commons_node_2.DependencyResolver(SessionsController._defaultConfig);
         this._expireTimeout = 24 * 3600000;
         this._cleanupInterval = 900000;
@@ -31,7 +31,7 @@ class SessionsController {
             this._commandSet = new SessionsCommandSet_1.SessionsCommandSet(this);
         return this._commandSet;
     }
-    isOpened() {
+    isOpen() {
         return this._cleanupTimer != null;
     }
     open(correlationId, callback) {
