@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const pip_services_commons_node_1 = require("pip-services-commons-node");
-const pip_services_commons_node_2 = require("pip-services-commons-node");
-const pip_services_commons_node_3 = require("pip-services-commons-node");
-const pip_services_commons_node_4 = require("pip-services-commons-node");
-const pip_services_commons_node_5 = require("pip-services-commons-node");
-const pip_services_components_node_1 = require("pip-services-components-node");
+const pip_services3_commons_node_1 = require("pip-services3-commons-node");
+const pip_services3_commons_node_2 = require("pip-services3-commons-node");
+const pip_services3_commons_node_3 = require("pip-services3-commons-node");
+const pip_services3_commons_node_4 = require("pip-services3-commons-node");
+const pip_services3_commons_node_5 = require("pip-services3-commons-node");
+const pip_services3_components_node_1 = require("pip-services3-components-node");
 const SessionV1_1 = require("../data/version1/SessionV1");
 const SessionsCommandSet_1 = require("./SessionsCommandSet");
 class SessionsController {
     constructor() {
-        this._logger = new pip_services_components_node_1.CompositeLogger();
-        this._dependencyResolver = new pip_services_commons_node_2.DependencyResolver(SessionsController._defaultConfig);
+        this._logger = new pip_services3_components_node_1.CompositeLogger();
+        this._dependencyResolver = new pip_services3_commons_node_2.DependencyResolver(SessionsController._defaultConfig);
         this._expireTimeout = 24 * 3600000;
         this._cleanupInterval = 900000;
     }
@@ -40,7 +40,7 @@ class SessionsController {
                 callback(null);
             return;
         }
-        this._cleanupTimer = new pip_services_commons_node_5.FixedRateTimer(() => {
+        this._cleanupTimer = new pip_services3_commons_node_5.FixedRateTimer(() => {
             this._logger.info(correlationId, 'Closing expired user sessions');
             this.closeExpiredSessions(correlationId, null);
         }, this._cleanupInterval);
@@ -63,19 +63,19 @@ class SessionsController {
         this._persistence.getOneById(correlationId, sessionId, callback);
     }
     openSession(correlationId, user_id, user_name, address, client, user, data, callback) {
-        let session = new SessionV1_1.SessionV1(pip_services_commons_node_3.IdGenerator.nextLong(), user_id, user_name, address, client);
+        let session = new SessionV1_1.SessionV1(pip_services3_commons_node_3.IdGenerator.nextLong(), user_id, user_name, address, client);
         session.user = user;
         session.data = data;
         this._persistence.create(correlationId, session, callback);
     }
     storeSessionData(correlationId, sessionId, data, callback) {
-        this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'data', data), callback);
+        this._persistence.updatePartially(correlationId, sessionId, pip_services3_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'data', data), callback);
     }
     updateSessionUser(correlationId, sessionId, user, callback) {
-        this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'user', user), callback);
+        this._persistence.updatePartially(correlationId, sessionId, pip_services3_commons_node_4.AnyValueMap.fromTuples('request_time', new Date(), 'user', user), callback);
     }
     closeSession(correlationId, sessionId, callback) {
-        this._persistence.updatePartially(correlationId, sessionId, pip_services_commons_node_4.AnyValueMap.fromTuples('active', false, 'request_time', new Date(), 'close_time', new Date(), 'data', null, 'user', null), callback);
+        this._persistence.updatePartially(correlationId, sessionId, pip_services3_commons_node_4.AnyValueMap.fromTuples('active', false, 'request_time', new Date(), 'close_time', new Date(), 'data', null, 'user', null), callback);
     }
     closeExpiredSessions(correlationId, callback) {
         let now = new Date().getTime();
@@ -86,6 +86,6 @@ class SessionsController {
         this._persistence.deleteById(correlationId, sessionId, callback);
     }
 }
-SessionsController._defaultConfig = pip_services_commons_node_1.ConfigParams.fromTuples('options.cleanup_interval', 900000, 'options.expire_timeout', 24 * 3600000, 'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0');
+SessionsController._defaultConfig = pip_services3_commons_node_1.ConfigParams.fromTuples('options.cleanup_interval', 900000, 'options.expire_timeout', 24 * 3600000, 'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0');
 exports.SessionsController = SessionsController;
 //# sourceMappingURL=SessionsController.js.map

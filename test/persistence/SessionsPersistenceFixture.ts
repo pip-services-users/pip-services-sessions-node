@@ -1,9 +1,9 @@
 let async = require('async');
 let assert = require('chai').assert;
 
-import { FilterParams } from 'pip-services-commons-node';
-import { PagingParams } from 'pip-services-commons-node';
-import { AnyValueMap } from 'pip-services-commons-node';
+import { FilterParams } from 'pip-services3-commons-node';
+import { PagingParams } from 'pip-services3-commons-node';
+import { AnyValueMap } from 'pip-services3-commons-node';
 
 import { ISessionsPersistence } from '../../src/persistence/ISessionsPersistence';
 import { SessionV1 } from '../../src/data/version1/SessionV1';

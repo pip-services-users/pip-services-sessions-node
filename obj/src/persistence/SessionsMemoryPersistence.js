@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 let _ = require('lodash');
-const pip_services_commons_node_1 = require("pip-services-commons-node");
-const pip_services_data_node_1 = require("pip-services-data-node");
-class SessionsMemoryPersistence extends pip_services_data_node_1.IdentifiableMemoryPersistence {
+const pip_services3_commons_node_1 = require("pip-services3-commons-node");
+const pip_services3_data_node_1 = require("pip-services3-data-node");
+class SessionsMemoryPersistence extends pip_services3_data_node_1.IdentifiableMemoryPersistence {
     constructor() {
         super();
     }
     composeFilter(filter) {
-        filter = filter || new pip_services_commons_node_1.FilterParams();
+        filter = filter || new pip_services3_commons_node_1.FilterParams();
         let id = filter.getAsNullableString('id');
         let userId = filter.getAsNullableString('user_id');
         let active = filter.getAsNullableBoolean('active');

@@ -1,4 +1,4 @@
-import { IStringIdentifiable } from 'pip-services-commons-node';
+import { IStringIdentifiable } from 'pip-services3-commons-node';
 export declare class SessionV1 implements IStringIdentifiable {
     constructor(id: string, user_id: string, user_name?: string, address?: string, client?: string);
     id: string;

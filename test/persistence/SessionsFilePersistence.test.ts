@@ -1,4 +1,4 @@
-import { ConfigParams } from 'pip-services-commons-node';
+import { ConfigParams } from 'pip-services3-commons-node';
 
 import { SessionsFilePersistence } from '../../src/persistence/SessionsFilePersistence';
 import { SessionsPersistenceFixture } from './SessionsPersistenceFixture';

@@ -1,5 +1,5 @@
-import { ConfigParams } from 'pip-services-commons-node';
-import { JsonFilePersister } from 'pip-services-data-node';
+import { ConfigParams } from 'pip-services3-commons-node';
+import { JsonFilePersister } from 'pip-services3-data-node';
 
 import { SessionsMemoryPersistence } from './SessionsMemoryPersistence';
 import { SessionV1 } from '../data/version1/SessionV1';
