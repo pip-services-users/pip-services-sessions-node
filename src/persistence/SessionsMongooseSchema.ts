@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 let Mixed = Schema.Types.Mixed;
 
-export let SessionsMongoDbSchema = function(collection?: string) {
+export let SessionsMongooseSchema = function(collection?: string) {
     collection = collection || 'sessions';
 
     let schema = new Schema(
