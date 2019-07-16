@@ -7,5 +7,7 @@ export declare class SessionsServiceFactory extends Factory {
     static MongoDbPersistenceDescriptor: Descriptor;
     static ControllerDescriptor: Descriptor;
     static HttpServiceDescriptor: Descriptor;
+    static CommandableGrpcServiceDescriptor: Descriptor;
+    static GrpcServiceDescriptor: Descriptor;
     constructor();
 }
