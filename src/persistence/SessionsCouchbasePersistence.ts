@@ -16,7 +16,7 @@ export class SessionsCouchbasePersistence
     implements ISessionsPersistence {
 
     constructor() {
-        super('sessions');
+        super('users', 'sessions');
     }
 
     private composeFilter(filter: FilterParams): any {
