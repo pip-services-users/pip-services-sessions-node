@@ -25,4 +25,9 @@ suite('SessionsFilePersistence', ()=> {
     test('CRUD Operations', (done) => {
         fixture.testCrudOperations(done);
     });
+
+    test('Close Expired', (done) => {
+        fixture.testCloseExpired(done);
+    });
+
 });

@@ -101,4 +101,9 @@ export class SessionsPersistenceFixture {
             }
         ], done);
     }
+
+    public testCloseExpired(done) {
+        this._persistence.closeExpired("", new Date(), done);
+    }
+
 }

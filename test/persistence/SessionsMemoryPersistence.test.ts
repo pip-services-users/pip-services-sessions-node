@@ -20,4 +20,8 @@ suite('SessionsMemoryPersistence', ()=> {
         fixture.testCrudOperations(done);
     });
 
+    test('Close Expired', (done) => {
+        fixture.testCloseExpired(done);
+    });
+
 });

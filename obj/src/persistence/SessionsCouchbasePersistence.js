@@ -56,7 +56,9 @@ class SessionsCouchbasePersistence extends pip_services3_couchbase_node_1.Identi
         let filter = "request_time<'" + pip_services3_commons_node_2.StringConverter.toString(request_time) + "' AND active=TRUE";
         super.getListByFilter(correlation_id, filter, null, null, (err, items) => {
             if (err) {
-                callback(err);
+                this._logger.error(correlation_id, err, 'Failed to close expired sessions');
+                if (callback)
+                    callback(err);
                 return;
             }
             if (items.length > 0)

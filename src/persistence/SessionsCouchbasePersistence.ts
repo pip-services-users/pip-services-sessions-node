@@ -89,7 +89,8 @@ export class SessionsCouchbasePersistence
         let filter = "request_time<'" + StringConverter.toString(request_time) + "' AND active=TRUE";
         super.getListByFilter(correlation_id, filter, null, null, (err, items) => {
             if (err) {
-                callback(err);
+                this._logger.error(correlation_id, err, 'Failed to close expired sessions');
+                if (callback) callback(err);
                 return;
             }
 

@@ -47,4 +47,9 @@ suite('SessionsMongoDbPersistence', ()=> {
     test('CRUD Operations', (done) => {
         fixture.testCrudOperations(done);
     });
+
+    test('Close Expired', (done) => {
+        fixture.testCloseExpired(done);
+    });
+
 });
