@@ -9,5 +9,5 @@ __export(require("./logic"));
 __export(require("./services/version1"));
 __export(require("./build"));
 __export(require("./container"));
-//module.exports = require('./container/SessionsSenecaPlugin');
+//module.exports = require('./container/SessionsSenecaPlugin'); 
 //# sourceMappingURL=index.js.map
