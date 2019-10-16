@@ -86,6 +86,6 @@ class SessionsController {
         this._persistence.deleteById(correlationId, sessionId, callback);
     }
 }
-SessionsController._defaultConfig = pip_services3_commons_node_1.ConfigParams.fromTuples('options.cleanup_interval', 900000, 'options.expire_timeout', 24 * 3600000, 'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0');
 exports.SessionsController = SessionsController;
+SessionsController._defaultConfig = pip_services3_commons_node_1.ConfigParams.fromTuples('options.cleanup_interval', 900000, 'options.expire_timeout', 24 * 3600000, 'dependencies.persistence', 'pip-services-sessions:persistence:*:*:1.0');
 //# sourceMappingURL=SessionsController.js.map

@@ -23,6 +23,7 @@ class SessionsServiceFactory extends pip_services3_components_node_1.Factory {
         this.registerAsType(SessionsServiceFactory.GrpcServiceDescriptor, SessionsGrpcServiceV1_1.SessionsGrpcServiceV1);
     }
 }
+exports.SessionsServiceFactory = SessionsServiceFactory;
 SessionsServiceFactory.Descriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "factory", "default", "default", "1.0");
 SessionsServiceFactory.MemoryPersistenceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "persistence", "memory", "*", "1.0");
 SessionsServiceFactory.FilePersistenceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "persistence", "file", "*", "1.0");
@@ -32,5 +33,4 @@ SessionsServiceFactory.ControllerDescriptor = new pip_services3_commons_node_1.D
 SessionsServiceFactory.HttpServiceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "service", "http", "*", "1.0");
 SessionsServiceFactory.CommandableGrpcServiceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "service", "commandable-grpc", "*", "1.0");
 SessionsServiceFactory.GrpcServiceDescriptor = new pip_services3_commons_node_1.Descriptor("pip-services-sessions", "service", "grpc", "*", "1.0");
-exports.SessionsServiceFactory = SessionsServiceFactory;
 //# sourceMappingURL=SessionsServiceFactory.js.map
