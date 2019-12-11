@@ -1,9 +1,9 @@
 import { FilterParams } from 'pip-services3-commons-node';
 import { PagingParams } from 'pip-services3-commons-node';
-import { IdentifiableMongoosePersistence } from 'pip-services3-mongoose-node';
+import { IdentifiableMongoDbPersistence } from 'pip-services3-mongodb-node';
 import { SessionV1 } from '../data/version1/SessionV1';
 import { ISessionsPersistence } from './ISessionsPersistence';
-export declare class SessionsMongoDbPersistence extends IdentifiableMongoosePersistence<SessionV1, string> implements ISessionsPersistence {
+export declare class SessionsMongoDbPersistence extends IdentifiableMongoDbPersistence<SessionV1, string> implements ISessionsPersistence {
     constructor();
     private composeFilter;
     getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams, callback: any): void;

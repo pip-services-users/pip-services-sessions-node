@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 let _ = require('lodash');
 const pip_services3_commons_node_1 = require("pip-services3-commons-node");
-const pip_services3_mongoose_node_1 = require("pip-services3-mongoose-node");
-const SessionsMongooseSchema_1 = require("./SessionsMongooseSchema");
-class SessionsMongoDbPersistence extends pip_services3_mongoose_node_1.IdentifiableMongoosePersistence {
+const pip_services3_mongodb_node_1 = require("pip-services3-mongodb-node");
+class SessionsMongoDbPersistence extends pip_services3_mongodb_node_1.IdentifiableMongoDbPersistence {
     constructor() {
-        super('sessions', SessionsMongooseSchema_1.SessionsMongooseSchema());
+        super('sessions');
     }
     composeFilter(filter) {
         filter = filter || new pip_services3_commons_node_1.FilterParams();
@@ -67,7 +66,7 @@ class SessionsMongoDbPersistence extends pip_services3_mongoose_node_1.Identifia
         let options = {
             multi: true
         };
-        this._model.update(criteria, newItem, options, (err, count) => {
+        this._collection.update(criteria, newItem, options, (err, count) => {
             if (count > 0)
                 this._logger.debug(correlation_id, 'Closed %d expired sessions', count);
             if (callback)
